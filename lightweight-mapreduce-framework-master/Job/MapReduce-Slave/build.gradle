@@ -1,0 +1,33 @@
+apply plugin : 'java'
+apply plugin : 'idea'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+mainClassName = 'slave.Client'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+jar.archiveName = 'Slave.jar'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repository.cloudera.com/artifactory/cloudera-repos/"
+    }
+}
+
+dependencies {
+	compile 'commons-io:commons-io:2.4'
+}
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    manifest {
+        attributes(
+		'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+		'Main-Class': 'slave.Client'
+	) 
+    }
+}
